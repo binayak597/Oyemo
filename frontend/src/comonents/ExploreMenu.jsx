@@ -2,7 +2,7 @@ import { menu_list } from "../assets/assets";
 
 const ExploreMenu = ({ category, setCategory }) => {
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16" id="menu">
       {/* Header Section */}
       <div className="text-center mb-12">
         <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">

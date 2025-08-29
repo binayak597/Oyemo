@@ -1,19 +1,38 @@
 import { useState } from "react";
 import { Search, ShoppingBasket, Menu, X } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const [menu, setMenu] = useState("home");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const menuItems = [
-    { id: "home", label: "Home" },
-    { id: "menu", label: "Menu" },
-    { id: "mobile-app", label: "Mobile App" },
-    { id: "contact-us", label: "Contact Us" }
+    { id: "home", label: "Home", href: "/", type: "route" },
+    { id: "menu", label: "Menu", href: "#menu", type: "section" },
+    { id: "contact-us", label: "Contact Us", href: "#contact", type: "section" }
   ];
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const handleNavigation = (item) => {
+    setMenu(item.id);
+    setIsMobileMenuOpen(false);
+    
+    if (item.type === "section") {
+      // Small delay to ensure mobile menu closes first
+      setTimeout(() => {
+        const element = document.querySelector(item.href);
+        if (element) {
+          element.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start',
+            inline: 'nearest'
+          });
+        }
+      }, 300);
+    }
   };
 
   return (
@@ -23,33 +42,57 @@ const Navbar = () => {
           
           {/* Logo */}
           <div className="flex-shrink-0">
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#23CE6B] cursor-pointer hover:scale-105 transition-transform duration-300">
-              Oyemo
-            </h1>
+            <Link to="/" onClick={() => setMenu("home")}>
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#23CE6B] cursor-pointer hover:scale-105 transition-transform duration-300">
+                Oyemo
+              </h1>
+            </Link>
           </div>
 
           {/* Desktop Menu */}
           <ul className="hidden lg:flex space-x-8 xl:space-x-12">
             {menuItems.map((item) => (
               <li key={item.id}>
-                <button
-                  onClick={() => setMenu(item.id)}
-                  className={`relative text-base xl:text-lg font-medium capitalize transition-all duration-300 hover:text-[#23CE6B] ${
-                    menu === item.id 
-                      ? "text-[#23CE6B]" 
-                      : "text-gray-600 hover:text-[#23CE6B]"
-                  }`}
-                >
-                  {item.label}
-                  {/* Active indicator */}
-                  <span
-                    className={`absolute -bottom-1 left-0 h-0.5 bg-[#23CE6B] transition-all duration-300 ${
-                      menu === item.id ? "w-full" : "w-0"
+                {item.type === "route" ? (
+                  <Link
+                    to={item.href}
+                    onClick={() => setMenu(item.id)}
+                    className={`relative text-base xl:text-lg font-medium capitalize transition-all duration-300 hover:text-[#23CE6B] ${
+                      menu === item.id 
+                        ? "text-[#23CE6B]" 
+                        : "text-gray-600 hover:text-[#23CE6B]"
                     }`}
-                  />
-                  {/* Hover indicator */}
-                  <span className="absolute -bottom-1 left-0 h-0.5 bg-[#23CE6B] opacity-30 w-0 hover:w-full transition-all duration-300" />
-                </button>
+                  >
+                    {item.label}
+                    {/* Active indicator */}
+                    <span
+                      className={`absolute -bottom-1 left-0 h-0.5 bg-[#23CE6B] transition-all duration-300 ${
+                        menu === item.id ? "w-full" : "w-0"
+                      }`}
+                    />
+                    {/* Hover indicator */}
+                    <span className="absolute -bottom-1 left-0 h-0.5 bg-[#23CE6B] opacity-30 w-0 hover:w-full transition-all duration-300" />
+                  </Link>
+                ) : (
+                  <button
+                    onClick={() => handleNavigation(item)}
+                    className={`relative text-base xl:text-lg font-medium capitalize transition-all duration-300 hover:text-[#23CE6B] ${
+                      menu === item.id 
+                        ? "text-[#23CE6B]" 
+                        : "text-gray-600 hover:text-[#23CE6B]"
+                    }`}
+                  >
+                    {item.label}
+                    {/* Active indicator */}
+                    <span
+                      className={`absolute -bottom-1 left-0 h-0.5 bg-[#23CE6B] transition-all duration-300 ${
+                        menu === item.id ? "w-full" : "w-0"
+                      }`}
+                    />
+                    {/* Hover indicator */}
+                    <span className="absolute -bottom-1 left-0 h-0.5 bg-[#23CE6B] opacity-30 w-0 hover:w-full transition-all duration-300" />
+                  </button>
+                )}
               </li>
             ))}
           </ul>
@@ -114,23 +157,41 @@ const Navbar = () => {
         }`}>
           <div className="py-4 space-y-2 bg-gradient-to-b from-[#E8FCCF] to-white rounded-b-xl">
             {menuItems.map((item, index) => (
-              <button
-                key={item.id}
-                onClick={() => {
-                  setMenu(item.id);
-                  setIsMobileMenuOpen(false);
-                }}
-                className={`block w-full text-left px-6 py-3 text-base font-medium capitalize transition-all duration-300 hover:bg-white hover:text-[#23CE6B] hover:pl-8 ${
-                  menu === item.id 
-                    ? "text-[#23CE6B] bg-white border-l-4 border-[#23CE6B]" 
-                    : "text-gray-700"
-                }`}
-                style={{
-                  animationDelay: `${index * 100}ms`
-                }}
-              >
-                {item.label}
-              </button>
+              <div key={item.id}>
+                {item.type === "route" ? (
+                  <Link
+                    to={item.href}
+                    onClick={() => {
+                      setMenu(item.id);
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className={`block w-full text-left px-6 py-3 text-base font-medium capitalize transition-all duration-300 hover:bg-white hover:text-[#23CE6B] hover:pl-8 ${
+                      menu === item.id 
+                        ? "text-[#23CE6B] bg-white border-l-4 border-[#23CE6B]" 
+                        : "text-gray-700"
+                    }`}
+                    style={{
+                      animationDelay: `${index * 100}ms`
+                    }}
+                  >
+                    {item.label}
+                  </Link>
+                ) : (
+                  <button
+                    onClick={() => handleNavigation(item)}
+                    className={`block w-full text-left px-6 py-3 text-base font-medium capitalize transition-all duration-300 hover:bg-white hover:text-[#23CE6B] hover:pl-8 ${
+                      menu === item.id 
+                        ? "text-[#23CE6B] bg-white border-l-4 border-[#23CE6B]" 
+                        : "text-gray-700"
+                    }`}
+                    style={{
+                      animationDelay: `${index * 100}ms`
+                    }}
+                  >
+                    {item.label}
+                  </button>
+                )}
+              </div>
             ))}
             
             {/* Mobile Sign In Button */}
@@ -154,4 +215,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar
+export default Navbar;
