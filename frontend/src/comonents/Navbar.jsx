@@ -113,10 +113,12 @@ const Navbar = ({ setShowLogin }) => {
 
             {/* Cart Icon with Badge */}
             <button className="relative p-2 rounded-full hover:bg-[#E8FCCF] transition-colors duration-300 group">
-              <ShoppingBasket
-                size={20}
-                className="text-gray-600 group-hover:text-[#23CE6B] transition-colors duration-300"
-              />
+              <Link to="/cart">
+                <ShoppingBasket
+                  size={20}
+                  className="text-gray-600 group-hover:text-[#23CE6B] transition-colors duration-300"
+                />
+              </Link>
               {/* Cart Badge */}
               <span className="absolute -top-1 -right-1 h-4 w-4 bg-[#23CE6B] text-white text-xs rounded-full flex items-center justify-center animate-pulse">
                 2
@@ -140,7 +142,9 @@ const Navbar = ({ setShowLogin }) => {
             </button>
 
             <button className="relative p-2 rounded-full hover:bg-[#E8FCCF] transition-colors duration-300">
-              <ShoppingBasket size={18} className="text-gray-600" />
+              <Link to="/cart">
+                <ShoppingBasket size={18} className="text-gray-600" />
+              </Link>
               <span className="absolute -top-1 -right-1 h-3 w-3 bg-[#23CE6B] rounded-full animate-pulse"></span>
             </button>
 
