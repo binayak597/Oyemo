@@ -6,6 +6,7 @@ import Footer from "./comonents/Footer";
 import Navbar from "./comonents/Navbar";
 import Cart from "./pages/Cart";
 import Home from "./pages/Home";
+import PlaceOrder from "./pages/PlaceOrder";
 
 const App = () => {
   const [showLogin, setShowLogin] = useState(false);
@@ -18,6 +19,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/order" element={<PlaceOrder />} />
         </Routes>
       </div>
 
