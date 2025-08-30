@@ -8,6 +8,6 @@ const foodSchema = new mongoose.Schema({
   category: { type: String, required: true },
 });
 
-const FoodModel = mongoose.models.foods || mongoose.model("Food", foodSchema);
+const FoodModel = mongoose.models.Food || mongoose.model("Food", foodSchema);
 
 export default FoodModel;

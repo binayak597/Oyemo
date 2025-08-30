@@ -34,7 +34,7 @@ category: "Salad"
 image: <file>
 ```
 
-**Success Response:**
+**Success Response:(201)**
 
 ```json
 {
@@ -52,7 +52,7 @@ image: <file>
 }
 ```
 
-**Error Response:**
+**Error Response:(500)**
 
 ```json
 {
@@ -71,7 +71,7 @@ image: <file>
 **Description:**  
 Fetch all food items.
 
-**Success Response:**
+**Success Response:(200)**
 
 ```json
 {
@@ -92,7 +92,7 @@ Fetch all food items.
 }
 ```
 
-**Error Response:**
+**Error Response:(500)**
 
 ```json
 {
@@ -119,7 +119,7 @@ Remove a food item by its ID.
 }
 ```
 
-**Success Response:**
+**Success Response:(200)**
 
 ```json
 {
@@ -129,12 +129,108 @@ Remove a food item by its ID.
 }
 ```
 
-**Error Response:**
+**Error Response:(500)**
 
 ```json
 {
   "success": false,
   "message": "Error message",
+  "data": null
+}
+```
+
+## Auth API Endpoints
+
+---
+
+### 1. Register User
+
+**Endpoint:**  
+`POST /api/v1.0/auth/register`  
+**Description:**  
+Register a new user.
+
+**Request Body (JSON):**
+```json
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "password": "yourStrongPassword"
+}
+```
+
+**Success Response:(201)**
+```json
+{
+  "success": true,
+  "message": "User Registered Successfully",
+  "data": {
+    "token": "<jwt_token>",
+    "role": "USER"
+  }
+}
+```
+
+**Error Responses:(400)**
+- User already exists:
+  ```json
+  {
+    "success": false,
+    "message": "User already exists",
+    "data": null
+  }
+  ```
+- Invalid email:
+  ```json
+  {
+    "success": false,
+    "message": "Please enter valid email",
+    "data": null
+  }
+  ```
+- Weak password:
+  ```json
+  {
+    "success": false,
+    "message": "Please enter strong password",
+    "data": null
+  }
+  ```
+
+---
+
+### 2. Login User
+
+**Endpoint:**  
+`POST /api/v1.0/auth/login`  
+**Description:**  
+Login an existing user.
+
+**Request Body (JSON):**
+```json
+{
+  "email": "john@example.com",
+  "password": "yourStrongPassword"
+}
+```
+
+**Success Response:(200)**
+```json
+{
+  "success": true,
+  "message": "User Loggedin Successfully",
+  "data": {
+    "token": "<jwt_token>",
+    "role": "USER"
+  }
+}
+```
+
+**Error Response:(401)**
+```json
+{
+  "success": false,
+  "message": "Invalid name or password",
   "data": null
 }
 ```
@@ -145,3 +241,5 @@ Remove a food item by its ID.
 
 - All responses are in JSON format.
 - For image upload, the file will be stored in the `uploads` directory on the server.
+- The `token` returned is a JWT for authentication in protected
+
