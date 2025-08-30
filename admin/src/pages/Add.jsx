@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { Upload, Plus, ImagePlus } from "lucide-react";
+import toast from 'react-hot-toast'
+import axios from 'axios'
+import { BASE_API } from "../main";
 
 const Add = () => {
   const [image, setImage] = useState(false);
@@ -9,6 +12,7 @@ const Add = () => {
     price: "",
     category: "Salad",
   });
+  const [loading, setLoading] = useState(false);
 
   const onChangeHandler = (ev) => {
     const { name, value } = ev.target;
@@ -25,13 +29,25 @@ const Add = () => {
     formData.append("category", category);
     formData.append("image", image);
 
-    setData({
-      name: "",
-      description: "",
-      price: "",
-      category: "Salad",
-    });
-    setImage(false);
+    setLoading(true);
+
+    try {
+      const res = await axios.post(`${BASE_API}/food/add`, formData);
+      if (res.data.success) {
+        setData({
+          name: "",
+          description: "",
+          price: "",
+          category: "Salad",
+        });
+        setImage(false);
+        toast.success("Food item Added Successfully" || response.data.message);
+      }
+    } catch (error) {
+      toast.error("Unable to add food item" || error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -41,7 +57,7 @@ const Add = () => {
           <Plus className="text-[#23CE6B]" size={28} />
           Add New Product
         </h2>
-        
+
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Image Upload */}
           <div className="space-y-3">
@@ -157,9 +173,16 @@ const Add = () => {
             <button
               type="submit"
               className="inline-flex items-center gap-2 px-6 py-3 bg-[#23CE6B] text-white font-medium rounded-lg hover:bg-[#23CE6B]/90 focus:ring-2 focus:ring-[#23CE6B]/50 transition-all duration-200 transform hover:scale-105"
+              disabled={loading}
             >
-              <Plus size={18} />
-              Add Product
+              {loading ? (
+                "Loading"
+              ) : (
+                <>
+                  <Plus size={18} />
+                  Add Product
+                </>
+              )}
             </button>
           </div>
         </form>
