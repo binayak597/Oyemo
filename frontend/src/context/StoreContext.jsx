@@ -1,7 +1,7 @@
-import { createContext, useEffect, useState } from "react";
-import { BASE_API } from "../main";
 import axios from "axios";
+import { createContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { BASE_API } from "../main";
 
 export const StoreContext = createContext(null);
 
@@ -16,10 +16,50 @@ const StoreContextProvider = ({ children }) => {
     } else {
       setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] + 1 }));
     }
+
+    if (token) {
+      try {
+        const res = await axios.post(
+          `${BASE_API}/cart/add`,
+          { itemId },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (res.data.success) {
+          toast.success("Added to cart successfully");
+        }
+      } catch (error) {
+        toast.error(error.message);
+      }
+    }
   };
 
   const removeFromCart = async (itemId) => {
     setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] - 1 }));
+
+    if (token) {
+      try {
+        const res = await axios.post(
+          `${BASE_API}/cart/remove`,
+          { itemId },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (res.data.success) {
+          toast.success("Removed from cart successfully");
+        }
+      } catch (error) {
+        toast.error(error.message);
+      }
+    }
   };
 
   const getTotalCartAmount = () => {
@@ -40,8 +80,18 @@ const StoreContextProvider = ({ children }) => {
         setFoodList(res.data.data);
       }
     } catch (error) {
-      toast.error("network error.. reload the page again..");
+      toast.error("Network error.. reload the page again..");
     }
+  };
+
+  const loadCartData = async (token) => {
+    const res = await axios.get(`${BASE_API}/cart/get`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    setCartItems(res.data.data.cartData);
   };
 
   const contextValue = {
@@ -60,10 +110,11 @@ const StoreContextProvider = ({ children }) => {
       await fetchFoodList();
       if (localStorage.getItem("token")) {
         setToken(localStorage.getItem("token"));
+        await loadCartData(localStorage.getItem("token"));
       }
     }
 
-    loadData()
+    loadData();
   }, []);
 
   return (
