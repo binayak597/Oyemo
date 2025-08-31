@@ -1,10 +1,22 @@
-import { useState } from "react";
-import { Search, ShoppingBasket, Menu, X } from "lucide-react";
+import { useContext, useState } from "react";
+import {
+  Search,
+  ShoppingBasket,
+  Menu,
+  X,
+  User,
+  ChevronDown,
+  ShoppingBag,
+  LogOut,
+} from "lucide-react";
 import { Link } from "react-router-dom";
+import { StoreContext } from "../context/StoreContext";
 
 const Navbar = ({ setShowLogin }) => {
   const [menu, setMenu] = useState("home");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const { token } = useContext(StoreContext);
 
   const menuItems = [
     { id: "home", label: "Home", href: "/", type: "route" },
@@ -110,7 +122,6 @@ const Navbar = ({ setShowLogin }) => {
                 className="text-gray-600 group-hover:text-[#23CE6B] transition-colors duration-300"
               />
             </button>
-
             {/* Cart Icon with Badge */}
             <button className="relative p-2 rounded-full hover:bg-[#E8FCCF] transition-colors duration-300 group">
               <Link to="/cart">
@@ -124,14 +135,46 @@ const Navbar = ({ setShowLogin }) => {
                 2
               </span>
             </button>
-
             {/* Sign In Button */}
-            <button
-              className="px-6 py-2 lg:px-8 lg:py-2.5 text-sm lg:text-base font-medium text-[#23CE6B] border-2 border-[#23CE6B] rounded-full hover:bg-[#23CE6B] hover:text-white transition-all duration-300 hover:shadow-lg hover:scale-105"
-              onClick={() => setShowLogin(true)}
-            >
-              Sign In
-            </button>
+
+            {!token ? (
+              <button
+                className="px-6 py-2 lg:px-8 lg:py-2.5 text-sm lg:text-base font-medium text-[#23CE6B] border-2 border-[#23CE6B] rounded-full hover:bg-[#23CE6B] hover:text-white transition-all duration-300 hover:shadow-lg hover:scale-105"
+                onClick={() => setShowLogin(true)}
+              >
+                Sign In
+              </button>
+            ) : (
+              <div className="relative group">
+                <button className="flex items-center space-x-2 p-2 rounded-full hover:bg-[#E8FCCF] transition-colors duration-300">
+                  <div className="w-8 h-8 bg-gradient-to-r from-[#23CE6B] to-[#23CE6B]/80 rounded-full flex items-center justify-center">
+                    <User size={16} className="text-white" />
+                  </div>
+                  <ChevronDown
+                    size={16}
+                    className="text-gray-600 group-hover:text-[#23CE6B] transition-colors duration-200"
+                  />
+                </button>
+
+                {/* Dropdown Menu */}
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                  <div className="py-2">
+                    <button
+                      onClick={() => navigate("/myorders")}
+                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-[#E8FCCF] hover:text-[#23CE6B] transition-colors duration-200"
+                    >
+                      <ShoppingBag size={16} className="mr-3" />
+                      Orders
+                    </button>
+                    <hr className="my-2 border-gray-200" />
+                    <button className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors duration-200">
+                      <LogOut size={16} className="mr-3" />
+                      Logout
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Mobile Menu Button & Icons */}
@@ -207,14 +250,35 @@ const Navbar = ({ setShowLogin }) => {
               </div>
             ))}
 
-            {/* Mobile Sign In Button */}
             <div className="px-6 pt-4">
-              <button
-                className="w-full py-3 text-center font-medium text-[#23CE6B] border-2 border-[#23CE6B] rounded-full hover:bg-[#23CE6B] hover:text-white transition-all duration-300"
-                onClick={() => setShowLogin(true)}
-              >
-                Sign In
-              </button>
+              {!token ? (
+                <div className="px-6 pt-4">
+                  <button
+                    className="w-full py-3 text-center font-medium text-[#23CE6B] border-2 border-[#23CE6B] rounded-full hover:bg-[#23CE6B] hover:text-white transition-all duration-300"
+                    onClick={() => setShowLogin(true)}
+                  >
+                    Sign In
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <div>
+                    <button
+                      onClick={() => navigate("/myorders")}
+                      className="block w-full text-left py-3 text-base font-medium capitalize transition-all duration-300 hover:bg-white hover:text-[#23CE6B] hover:pl-8 text-gray-700"
+                    >
+                      <ShoppingBag size={18} className="inline mr-3" />
+                      My Orders
+                    </button>
+                  </div>
+                  <div>
+                    <button className="block w-full text-left py-3 text-base font-medium capitalize transition-all duration-300 hover:bg-white hover:text-red-600 hover:pl-8 text-gray-700">
+                      <LogOut size={18} className="inline mr-3" />
+                      Logout
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>

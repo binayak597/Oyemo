@@ -1,5 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { X, Eye, EyeOff, Mail, Lock, User } from "lucide-react";
+import toast from "react-hot-toast";
+import axios from "axios";
+import { StoreContext } from "../context/StoreContext";
+import { BASE_API } from "../main";
 
 const Auth = ({ setShowLogin }) => {
   const [currentPage, setCurrentPage] = useState("Login");
@@ -10,6 +14,9 @@ const Auth = ({ setShowLogin }) => {
     email: "",
     password: "",
   });
+  const [loading, setLoading] = useState(false);
+
+  const { setToken } = useContext(StoreContext);
 
   // Animation effect on mount
   useEffect(() => {
@@ -29,13 +36,39 @@ const Auth = ({ setShowLogin }) => {
     }, 300);
   };
 
-  const handleSubmit = (ev) => {
+  const handleSubmit = async (ev) => {
     ev.preventDefault();
-    setData({
-      name: "",
-      email: "",
-      password: "",
-    });
+
+    let pageUrl;
+    if (currentPage === "Login") {
+      pageUrl = `${BASE_API}` + "/auth/login";
+    } else {
+      pageUrl = `${BASE_API}` + "/auth/register";
+    }
+
+    setLoading(true);
+
+    try {
+      const res = await axios.post(pageUrl, data);
+      if (res.data.success) {
+        const { token, user } = res.data.data;
+
+        setToken(res.data.data.token);
+        localStorage.setItem("token", res.data.data.token);
+        if (currentPage === "Login") {
+          toast.success("Login is Successful");
+        } else {
+          toast.success("Registration is Successful");
+        }
+
+        setIsVisible(false);
+        setShowLogin(false);
+      }
+    } catch (error) {
+      toast.error(error.message || "Registration or login failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -163,12 +196,18 @@ const Auth = ({ setShowLogin }) => {
           </div>
 
           {/* Submit Button */}
-          <div
+          <button
             onClick={handleSubmit}
+            type="submit"
             className="w-full py-3 px-6 bg-gradient-to-r from-[#23CE6B] to-[#23CE6B]/90 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-[#23CE6B]/25 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 focus:ring-2 focus:ring-[#23CE6B]/20 focus:outline-none cursor-pointer text-center"
+            disabled={loading}
           >
-            {currentPage === "Sign Up" ? "Create Account" : "Sign In"}
-          </div>
+            {loading
+              ? "Loading"
+              : currentPage === "Sign Up"
+              ? "Create Account"
+              : "Sign In"}
+          </button>
 
           {/* Terms & Conditions */}
           <div className="flex items-start space-x-3">
