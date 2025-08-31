@@ -1,11 +1,14 @@
 import { createContext, useEffect, useState } from "react";
-import { food_list } from "../assets/assets";
+import { BASE_API } from "../main";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 export const StoreContext = createContext(null);
 
 const StoreContextProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState({});
-  const [token, setToken] = useState("")
+  const [token, setToken] = useState("");
+  const [food_list, setFoodList] = useState([]);
 
   const addToCart = async (itemId) => {
     if (!cartItems[itemId]) {
@@ -30,6 +33,17 @@ const StoreContextProvider = ({ children }) => {
     return totalAmount;
   };
 
+  const fetchFoodList = async () => {
+    try {
+      const res = await axios.get(`${BASE_API}/food/list`);
+      if (res.data.success) {
+        setFoodList(res.data.data);
+      }
+    } catch (error) {
+      toast.error("network error.. reload the page again..");
+    }
+  };
+
   const contextValue = {
     food_list,
     cartItems,
@@ -38,15 +52,20 @@ const StoreContextProvider = ({ children }) => {
     removeFromCart,
     getTotalCartAmount,
     token,
-    setToken
+    setToken,
   };
 
   useEffect(() => {
-
-    if(localStorage.getItem("token")){
-      setToken(localStorage.getItem("token"))
+    async function loadData() {
+      await fetchFoodList();
+      if (localStorage.getItem("token")) {
+        setToken(localStorage.getItem("token"));
+      }
     }
-  }, [])
+
+    loadData()
+  }, []);
+
   return (
     <StoreContext.Provider value={contextValue}>
       {children}

@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { Plus, Minus, Star } from "lucide-react";
 import { StoreContext } from "../context/StoreContext";
+import { BASE_URL } from "../main";
 
 const FoodItem = ({ id, name, price, description, image }) => {
   const { cartItems, addToCart, removeFromCart } = useContext(StoreContext);
@@ -10,7 +11,7 @@ const FoodItem = ({ id, name, price, description, image }) => {
       {/* Image Container */}
       <div className="relative overflow-hidden rounded-t-2xl">
         <img 
-          src={image} 
+          src={`${BASE_URL}/images/storage/` + image} 
           alt={name}
           className="w-full h-48 sm:h-52 md:h-56 object-cover transition-transform duration-700 ease-out group-hover:scale-110" 
         />

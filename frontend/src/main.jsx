@@ -6,6 +6,7 @@ import StoreContextProvider from "./context/StoreContext";
 import { Toaster } from "react-hot-toast";
 
 export const BASE_API = import.meta.env.VITE_BASE_API;
+export const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
