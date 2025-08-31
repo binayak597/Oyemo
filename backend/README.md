@@ -151,6 +151,7 @@ Remove a food item by its ID.
 Register a new user.
 
 **Request Body (JSON):**
+
 ```json
 {
   "name": "John Doe",
@@ -160,6 +161,7 @@ Register a new user.
 ```
 
 **Success Response:(201)**
+
 ```json
 {
   "success": true,
@@ -172,6 +174,7 @@ Register a new user.
 ```
 
 **Error Responses:(400)**
+
 - User already exists:
   ```json
   {
@@ -207,6 +210,7 @@ Register a new user.
 Login an existing user.
 
 **Request Body (JSON):**
+
 ```json
 {
   "email": "john@example.com",
@@ -215,6 +219,7 @@ Login an existing user.
 ```
 
 **Success Response:(200)**
+
 ```json
 {
   "success": true,
@@ -227,6 +232,7 @@ Login an existing user.
 ```
 
 **Error Response:(401)**
+
 ```json
 {
   "success": false,
@@ -237,9 +243,162 @@ Login an existing user.
 
 ---
 
+## Cart API Endpoints
+
+  
+**Note:** All cart endpoints require authentication. Pass the JWT token in the `Authorization` header as `Bearer <token>`.
+
+---
+
+### 1. Add Item to Cart
+
+**Endpoint:**  
+`POST /api/v1.0/cart/add`  
+**Description:**  
+Add a food item to the authenticated user's cart.
+
+**Headers:**
+
+```
+Authorization: Bearer <jwt_token>
+```
+
+**Request Body (JSON):**
+
+```json
+{
+  "itemId": "<food_id>"
+}
+```
+
+**Success Response (200):**
+
+```json
+{
+  "success": true,
+  "message": "Fooditem added to cart successfully",
+  "data": {
+    "_id": "<user_id>",
+    "name": "John Doe",
+    "email": "john@example.com",
+    "password": "<hashed_password>",
+    "role": "USER",
+    "cartData": {
+      "<food_id>": 1
+    },
+    "__v": 0
+  }
+}
+```
+
+**Error Response (401/500):**
+
+```json
+{
+  "success": false,
+  "message": "Unauthorized" | "Error message",
+  "data": null
+}
+```
+
+---
+
+### 2. Remove Item from Cart
+
+**Endpoint:**  
+`POST /api/v1.0/cart/remove`  
+**Description:**  
+Remove a food item from the authenticated user's cart (decreases quantity or removes if quantity is 1).
+
+**Headers:**
+
+```
+Authorization: Bearer <jwt_token>
+```
+
+**Request Body (JSON):**
+
+```json
+{
+  "itemId": "<food_id>"
+}
+```
+
+**Success Response (200):**
+
+```json
+{
+  "success": true,
+  "message": "Fooditem removed from cart successfully",
+  "data": {
+    "_id": "<user_id>",
+    "name": "John Doe",
+    "email": "john@example.com",
+    "password": "<hashed_password>",
+    "role": "USER",
+    "cartData": {
+      // updated cart data
+    },
+    "__v": 0
+  }
+}
+```
+
+**Error Response (401/500):**
+
+```json
+{
+  "success": false,
+  "message": "Unauthorized" | "Error message",
+  "data": null
+}
+```
+
+---
+
+### 3. Get User Cart
+
+**Endpoint:**  
+`GET /api/v1.0/cart/get`  
+**Description:**  
+Fetch the authenticated user's cart data.
+
+**Headers:**
+
+```
+Authorization: Bearer <jwt_token>
+```
+
+**Success Response (200):**
+
+```json
+{
+  "success": true,
+  "message": "Fetched user cart data successfully",
+  "data": {
+    "cartData": {
+      "<food_id>": 2,
+      "<another_food_id>": 1
+    }
+  }
+}
+```
+
+**Error Response (401/500):**
+
+```json
+{
+  "success": false,
+  "message": "Unauthorized" | "Error message",
+  "data": null
+}
+```
+
+---
+
 **Note:**
 
 - All responses are in JSON format.
 - For image upload, the file will be stored in the `uploads` directory on the server.
-- The `token` returned is a JWT for authentication in protected
-
+- The `token` returned is a JWT for authentication in protected routes.
+- `cartData` object maps food item IDs to their quantities in the user's cart.
