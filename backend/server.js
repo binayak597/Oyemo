@@ -27,7 +27,6 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.use(cors())
 app.use("/images/storage", express.static("uploads"))
 
 app.use("/api/v1.0", routes);
