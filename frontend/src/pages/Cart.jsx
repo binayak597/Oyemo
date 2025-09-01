@@ -9,7 +9,6 @@ import {
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { StoreContext } from "../context/StoreContext";
-import { BASE_URL } from "../main";
 import toast from "react-hot-toast";
 
 const Cart = () => {
@@ -130,7 +129,7 @@ const Cart = () => {
                             <div className="flex items-center space-x-4">
                               <div className="relative group">
                                 <img
-                                  src={`${BASE_URL}/images/storage/` + item.image}
+                                  src={item.image}
                                   alt={item.name}
                                   className="w-16 h-16 rounded-lg object-cover group-hover:scale-110 transition-transform duration-200"
                                 />
@@ -208,7 +207,7 @@ const Cart = () => {
                     >
                       <div className="flex items-center space-x-4">
                         <img
-                          src={`${BASE_URL}/images/storage/` + item.image}
+                          src={item.image}
                           alt={item.name}
                           className="w-16 h-16 rounded-lg object-cover"
                         />
