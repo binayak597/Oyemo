@@ -3,8 +3,7 @@ import { List as ListIcon, Trash2, Search } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { BASE_API } from "../main";
-
-const url = import.meta.env.VITE_URL
+import {BASE_URL} from "../main"
 
 const List = () => {
   const [list, setList] = useState([]);
@@ -97,7 +96,7 @@ const List = () => {
               {/* Image */}
               <div className="col-span-2 sm:col-span-1">
                 <img
-                  src={`${url}/images/storage/` + item.image}
+                  src={`${BASE_URL}/images/storage/` + item.image}
                   alt={item.name}
                   className="w-12 h-12 object-cover rounded-lg shadow-sm"
                 />
