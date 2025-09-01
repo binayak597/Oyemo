@@ -10,6 +10,7 @@ import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { StoreContext } from "../context/StoreContext";
 import { BASE_URL } from "../main";
+import toast from "react-hot-toast";
 
 const Cart = () => {
   const [promoCode, setPromoCode] = useState("");
@@ -18,11 +19,12 @@ const Cart = () => {
   const {
     food_list,
     cartItems,
-    setCartItems,
     addToCart,
     removeFromCart,
     getTotalCartAmount,
-    url,
+    setShowLogin,
+    token
+
   } = useContext(StoreContext);
 
   const navigate = useNavigate();
@@ -32,6 +34,16 @@ const Cart = () => {
       setIsPromoApplied(true);
     }
   };
+
+  const handleCheckout = () => {
+
+    if(!token){
+      setShowLogin(true);
+      toast.error("Please login first to order food")
+      return;
+    }
+    navigate("/order")
+  }
 
   const subtotal = getTotalCartAmount();
   const deliveryFee = subtotal === 0 ? 0 : 2;
@@ -329,7 +341,7 @@ const Cart = () => {
                   </div>
 
                   <div
-                    onClick={() => navigate("/order")}
+                    onClick={handleCheckout}
                     className="w-full mt-6 py-4 bg-gradient-to-r from-[#23CE6B] to-[#23CE6B]/90 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-[#23CE6B]/25 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 cursor-pointer text-center flex items-center justify-center group"
                   >
                     Proceed to Checkout

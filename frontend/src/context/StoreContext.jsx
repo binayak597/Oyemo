@@ -9,6 +9,7 @@ const StoreContextProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState({});
   const [token, setToken] = useState("");
   const [food_list, setFoodList] = useState([]);
+  const [showLogin, setShowLogin] = useState(false);
 
   const addToCart = async (itemId) => {
     if (!cartItems[itemId]) {
@@ -29,9 +30,6 @@ const StoreContextProvider = ({ children }) => {
             },
           }
         );
-        if (res.data.success) {
-          toast.success("Added to cart successfully");
-        }
       } catch (error) {
         toast.error(error.message);
       }
@@ -39,7 +37,13 @@ const StoreContextProvider = ({ children }) => {
   };
 
   const removeFromCart = async (itemId) => {
-    setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] - 1 }));
+    setCartItems((prev) => {
+      const updatedCartItems = { ...prev, [itemId]: prev[itemId] - 1 };
+
+      if (updatedCartItems[itemId] <= 0) delete updatedCartItems[itemId];
+
+      return updatedCartItems;
+    });
 
     if (token) {
       try {
@@ -53,9 +57,7 @@ const StoreContextProvider = ({ children }) => {
             },
           }
         );
-        if (res.data.success) {
-          toast.success("Removed from cart successfully");
-        }
+        
       } catch (error) {
         toast.error(error.message);
       }
@@ -103,6 +105,8 @@ const StoreContextProvider = ({ children }) => {
     getTotalCartAmount,
     token,
     setToken,
+    showLogin,
+    setShowLogin
   };
 
   useEffect(() => {

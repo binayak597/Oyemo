@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Auth from "./comonents/Auth";
 import Footer from "./comonents/Footer";
 import Navbar from "./comonents/Navbar";
@@ -9,9 +9,11 @@ import Home from "./pages/Home";
 import MyOrders from "./pages/MyOrders";
 import PlaceOrder from "./pages/PlaceOrder";
 import Verify from "./pages/Verify";
+import { StoreContext } from "./context/StoreContext";
 
 const App = () => {
-  const [showLogin, setShowLogin] = useState(false);
+  
+  const {showLogin, setShowLogin} = useContext(StoreContext)
   return (
     <>
       {showLogin && <Auth setShowLogin={setShowLogin} />}

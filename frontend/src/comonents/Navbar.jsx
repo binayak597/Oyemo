@@ -18,7 +18,7 @@ const Navbar = ({ setShowLogin }) => {
 
   const navigate = useNavigate();
 
-  const { token, setToken } = useContext(StoreContext);
+  const { cartItems, token, setToken } = useContext(StoreContext);
 
   const menuItems = [
     { id: "home", label: "Home", href: "/", type: "route" },
@@ -139,9 +139,12 @@ const Navbar = ({ setShowLogin }) => {
                 />
               </Link>
               {/* Cart Badge */}
-              <span className="absolute -top-1 -right-1 h-4 w-4 bg-[#23CE6B] text-white text-xs rounded-full flex items-center justify-center animate-pulse">
-                2
+              {Object.keys(cartItems).length > 0 && (
+                 <span className="absolute -top-1 -right-1 h-4 w-4 bg-[#23CE6B] text-white text-xs rounded-full flex items-center justify-center animate-pulse">
+                {Object.keys(cartItems).length}
               </span>
+              )}
+             
             </button>
             {/* Sign In Button */}
 

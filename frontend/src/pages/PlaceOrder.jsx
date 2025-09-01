@@ -12,10 +12,11 @@ import {
 import { useContext, useState } from "react";
 import { StoreContext } from "../context/StoreContext";
 import axios from "axios";
+import { toast } from "react-hot-toast";
 import { BASE_API } from "../main";
 
 const PlaceOrder = () => {
-  const { getTotalCartAmount, cartItems, food_list, token } =
+  const { getTotalCartAmount, cartItems, food_list, token, setShowLogin } =
     useContext(StoreContext);
 
   const [data, setData] = useState({
@@ -37,8 +38,50 @@ const PlaceOrder = () => {
     setData((data) => ({ ...data, [name]: value }));
   };
 
+  const validateForm = () => {
+    const requiredFields = [
+      "firstName",
+      "lastName",
+      "email",
+      "street",
+      "city",
+      "state",
+      "zipcode",
+      "country",
+      "phone",
+    ];
+
+    for (let field of requiredFields) {
+      if (!data[field] || data[field].trim() === "") {
+        return false;
+      }
+    }
+
+    return true;
+  };
+
   const handlePlaceOrder = async (ev) => {
     ev.preventDefault();
+
+    if(!token){
+      setShowLogin(true)
+       toast.error("Please login first to order food")
+      return;
+    }
+
+    if (!validateForm()) {
+      toast.error("Please fill in all required fields with valid information");
+      return;
+    }
+
+    // Check if cart has items
+    if (getTotalCartAmount() === 0) {
+      toast.error(
+        "Your cart is empty. Please add items before placing an order"
+      );
+      return;
+    }
+
     setIsProcessing(true);
 
     let orderItems = [];
@@ -79,12 +122,16 @@ const PlaceOrder = () => {
       }
     } catch (error) {
       toast.error(error.message);
+    } finally {
+      setIsProcessing(false);
     }
   };
 
   const subtotal = getTotalCartAmount();
   const deliveryFee = subtotal === 0 ? 0 : 2;
   const total = subtotal + deliveryFee;
+  const isFormValid = validateForm();
+  const hasCartItems = subtotal > 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-[#E8FCCF]/20 pt-20 pb-12 px-4 sm:px-6 lg:px-8">
@@ -118,7 +165,7 @@ const PlaceOrder = () => {
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <label className="text-sm font-medium text-gray-700">
-                      First Name
+                      First Name *
                     </label>
                     <div className="relative group">
                       <User
@@ -139,7 +186,7 @@ const PlaceOrder = () => {
 
                   <div className="space-y-1">
                     <label className="text-sm font-medium text-gray-700">
-                      Last Name
+                      Last Name *
                     </label>
                     <div className="relative group">
                       <User
@@ -163,7 +210,7 @@ const PlaceOrder = () => {
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <label className="text-sm font-medium text-gray-700">
-                      Email Address
+                      Email Address *
                     </label>
                     <div className="relative group">
                       <Mail
@@ -184,7 +231,7 @@ const PlaceOrder = () => {
 
                   <div className="space-y-1">
                     <label className="text-sm font-medium text-gray-700">
-                      Phone Number
+                      Phone Number *
                     </label>
                     <div className="relative group">
                       <Phone
@@ -208,7 +255,7 @@ const PlaceOrder = () => {
                 <div className="space-y-4">
                   <div className="space-y-1">
                     <label className="text-sm font-medium text-gray-700">
-                      Street Address
+                      Street Address *
                     </label>
                     <div className="relative group">
                       <MapPin
@@ -230,7 +277,7 @@ const PlaceOrder = () => {
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="space-y-1">
                       <label className="text-sm font-medium text-gray-700">
-                        City
+                        City *
                       </label>
                       <input
                         required
@@ -245,7 +292,7 @@ const PlaceOrder = () => {
 
                     <div className="space-y-1">
                       <label className="text-sm font-medium text-gray-700">
-                        State
+                        State *
                       </label>
                       <input
                         required
@@ -262,7 +309,7 @@ const PlaceOrder = () => {
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="space-y-1">
                       <label className="text-sm font-medium text-gray-700">
-                        ZIP Code
+                        ZIP Code *
                       </label>
                       <input
                         required
@@ -277,7 +324,7 @@ const PlaceOrder = () => {
 
                     <div className="space-y-1">
                       <label className="text-sm font-medium text-gray-700">
-                        Country
+                        Country *
                       </label>
                       <input
                         required
@@ -354,22 +401,26 @@ const PlaceOrder = () => {
                 <button
                   type="submit"
                   onClick={handlePlaceOrder}
-                  className={`w-full mt-6 py-4 font-semibold rounded-lg transition-all duration-200 cursor-pointer text-center flex items-center justify-center group ${
-                    isProcessing
-                      ? "bg-gray-400 text-white cursor-not-allowed"
-                      : "bg-gradient-to-r from-[#23CE6B] to-[#23CE6B]/90 text-white hover:shadow-lg hover:shadow-[#23CE6B]/25 hover:scale-[1.02] active:scale-[0.98]"
+                  className={`w-full mt-6 py-4 font-semibold rounded-lg transition-all duration-200 text-center flex items-center justify-center group ${
+                    !isFormValid || !hasCartItems || isProcessing
+                      ? "bg-gray-400 text-white cursor-not-allowed opacity-75"
+                      : "bg-gradient-to-r from-[#23CE6B] to-[#23CE6B]/90 text-white hover:shadow-lg hover:shadow-[#23CE6B]/25 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
                   }`}
                 >
                   {isProcessing ? (
                     <>
                       <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent mr-2" />
-                      Processing Order...
+                      Processing Order
                     </>
                   ) : (
                     <>
                       Proceed to Payment
                       <CreditCard
-                        className="ml-2 group-hover:translate-x-1 transition-transform duration-200"
+                        className={`ml-2 transition-transform duration-200 ${
+                          isFormValid && hasCartItems
+                            ? "group-hover:translate-x-1"
+                            : ""
+                        }`}
                         size={18}
                       />
                     </>
