@@ -9,12 +9,14 @@ import {
   ShoppingBag,
   LogOut,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { StoreContext } from "../context/StoreContext";
 
 const Navbar = ({ setShowLogin }) => {
   const [menu, setMenu] = useState("home");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const navigate = useNavigate();
 
   const { token } = useContext(StoreContext);
 
@@ -160,7 +162,7 @@ const Navbar = ({ setShowLogin }) => {
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                   <div className="py-2">
                     <button
-                      onClick={() => navigate("/myorders")}
+                      onClick={() => navigate("/my-orders")}
                       className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-[#E8FCCF] hover:text-[#23CE6B] transition-colors duration-200"
                     >
                       <ShoppingBag size={16} className="mr-3" />
@@ -264,7 +266,7 @@ const Navbar = ({ setShowLogin }) => {
                 <>
                   <div>
                     <button
-                      onClick={() => navigate("/myorders")}
+                      onClick={() => navigate("/my-orders")}
                       className="block w-full text-left py-3 text-base font-medium capitalize transition-all duration-300 hover:bg-white hover:text-[#23CE6B] hover:pl-8 text-gray-700"
                     >
                       <ShoppingBag size={18} className="inline mr-3" />

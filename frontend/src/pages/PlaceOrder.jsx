@@ -11,9 +11,12 @@ import {
 } from "lucide-react";
 import { useContext, useState } from "react";
 import { StoreContext } from "../context/StoreContext";
+import axios from "axios";
+import { BASE_API } from "../main";
 
 const PlaceOrder = () => {
-  const { getTotalCartAmount } = useContext(StoreContext);
+  const { getTotalCartAmount, cartItems, food_list, token } =
+    useContext(StoreContext);
 
   const [data, setData] = useState({
     firstName: "",
@@ -27,7 +30,6 @@ const PlaceOrder = () => {
     phone: "",
   });
 
-  const [selectedPayment, setSelectedPayment] = useState("card");
   const [isProcessing, setIsProcessing] = useState(false);
 
   const onChangeHandler = (ev) => {
@@ -39,21 +41,45 @@ const PlaceOrder = () => {
     ev.preventDefault();
     setIsProcessing(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      setData({
-        firstName: "",
-        lastName: "",
-        email: "",
-        street: "",
-        city: "",
-        state: "",
-        zipcode: "",
-        country: "",
-        phone: "",
+    let orderItems = [];
+    food_list.map((item) => {
+      if (cartItems[item._id] > 0) {
+        let itemInfo = item;
+        itemInfo["quantity"] = cartItems[item._id];
+        orderItems.push(itemInfo);
+      }
+    });
+    let orderData = {
+      address: data,
+      items: orderItems,
+      amount: getTotalCartAmount() + 2,
+    };
+
+    try {
+      const res = await axios.post(`${BASE_API}/order/place`, orderData, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       });
-      setIsProcessing(false);
-    }, 2000);
+      if (res.data.success) {
+        const { session_url } = res.data.data;
+        setData({
+          firstName: "",
+          lastName: "",
+          email: "",
+          street: "",
+          city: "",
+          state: "",
+          zipcode: "",
+          country: "",
+          phone: "",
+        });
+        window.location.replace(session_url);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 
   const subtotal = getTotalCartAmount();
@@ -267,99 +293,6 @@ const PlaceOrder = () => {
                 </div>
               </div>
             </div>
-
-            {/* Payment Method Section */}
-            <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-              <div className="bg-gradient-to-r from-[#23CE6B] to-[#23CE6B]/90 text-white p-6">
-                <div className="flex items-center">
-                  <CreditCard className="mr-3" size={24} />
-                  <h2 className="text-xl font-semibold">Payment Method</h2>
-                </div>
-              </div>
-
-              <div className="p-6">
-                <div className="grid gap-4">
-                  {/* Credit Card Option */}
-                  <div
-                    onClick={() => setSelectedPayment("card")}
-                    className={`p-4 rounded-lg border-2 transition-all duration-200 cursor-pointer ${
-                      selectedPayment === "card"
-                        ? "border-[#23CE6B] bg-[#E8FCCF]/30"
-                        : "border-gray-200 hover:border-gray-300"
-                    }`}
-                  >
-                    <div className="flex items-center space-x-3">
-                      <div
-                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors duration-200 ${
-                          selectedPayment === "card"
-                            ? "border-[#23CE6B] bg-[#23CE6B]"
-                            : "border-gray-300"
-                        }`}
-                      >
-                        {selectedPayment === "card" && (
-                          <Check size={12} className="text-white" />
-                        )}
-                      </div>
-                      <CreditCard
-                        size={20}
-                        className={
-                          selectedPayment === "card"
-                            ? "text-[#23CE6B]"
-                            : "text-gray-600"
-                        }
-                      />
-                      <span
-                        className={`font-medium ${
-                          selectedPayment === "card"
-                            ? "text-[#23CE6B]"
-                            : "text-gray-900"
-                        }`}
-                      >
-                        Credit/Debit Card
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Cash on Delivery Option */}
-                  <div
-                    onClick={() => setSelectedPayment("cod")}
-                    className={`p-4 rounded-lg border-2 transition-all duration-200 cursor-pointer ${
-                      selectedPayment === "cod"
-                        ? "border-[#23CE6B] bg-[#E8FCCF]/30"
-                        : "border-gray-200 hover:border-gray-300"
-                    }`}
-                  >
-                    <div className="flex items-center space-x-3">
-                      <div
-                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors duration-200 ${
-                          selectedPayment === "cod"
-                            ? "border-[#23CE6B] bg-[#23CE6B]"
-                            : "border-gray-300"
-                        }`}
-                      >
-                        {selectedPayment === "cod" && (
-                          <Check size={12} className="text-white" />
-                        )}
-                      </div>
-                      <div className="w-5 h-5 bg-green-100 rounded flex items-center justify-center">
-                        <span className="text-xs font-bold text-green-600">
-                          $
-                        </span>
-                      </div>
-                      <span
-                        className={`font-medium ${
-                          selectedPayment === "cod"
-                            ? "text-[#23CE6B]"
-                            : "text-gray-900"
-                        }`}
-                      >
-                        Cash on Delivery
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* Order Summary */}
@@ -418,7 +351,8 @@ const PlaceOrder = () => {
                 </div>
 
                 {/* Place Order Button */}
-                <div
+                <button
+                  type="submit"
                   onClick={handlePlaceOrder}
                   className={`w-full mt-6 py-4 font-semibold rounded-lg transition-all duration-200 cursor-pointer text-center flex items-center justify-center group ${
                     isProcessing
@@ -440,7 +374,7 @@ const PlaceOrder = () => {
                       />
                     </>
                   )}
-                </div>
+                </button>
 
                 <p className="text-xs text-gray-500 text-center mt-4 leading-relaxed">
                   By placing your order, you agree to our terms of service and
