@@ -1,4 +1,4 @@
-# BACKEND API ENDPOINTS
+# BACKEND API ENDPOINTS DOCUMENTATION
 
 ## Food API Endpoints
 
@@ -245,7 +245,6 @@ Login an existing user.
 
 ## Cart API Endpoints
 
-  
 **Note:** All cart endpoints require authentication. Pass the JWT token in the `Authorization` header as `Bearer <token>`.
 
 ---
@@ -396,9 +395,256 @@ Authorization: Bearer <jwt_token>
 
 ---
 
+## Order API Endpoints
+
+
+**Note:** Most order endpoints require authentication. Pass the JWT token in the `Authorization` header as `Bearer <token>`.
+
+---
+
+### 1. Place Order
+
+**Endpoint:**  
+`POST /api/v1.0/order/place`  
+**Description:**  
+Place a new order and initiate Stripe payment. Requires authentication.
+
+**Headers:**
+
+```
+Authorization: Bearer <jwt_token>
+```
+
+**Request Body (JSON):**
+
+```json
+{
+  "items": [
+    {
+      "name": "Greek Salad",
+      "price": 12,
+      "quantity": 2
+    }
+  ],
+  "amount": 26,
+  "address": {
+    "street": "123 Main St",
+    "city": "Athens",
+    "zip": "10001"
+  }
+}
+```
+
+**Success Response (200):**
+
+```json
+{
+  "success": true,
+  "message": "Payment done successfully",
+  "data": {
+    "session_url": "<stripe_checkout_url>"
+  }
+}
+```
+
+**Error Response (500):**
+
+```json
+{
+  "success": false,
+  "message": "Error message",
+  "data": null
+}
+```
+
+---
+
+### 2. Verify Order
+
+**Endpoint:**  
+`POST /api/v1.0/order/verify`  
+**Description:**  
+Verify the payment status of an order after Stripe checkout.
+
+**Request Body (JSON):**
+
+```json
+{
+  "orderId": "<order_id>",
+  "success": "true" // or "false"
+}
+```
+
+**Success Response (if payment successful):**
+
+```json
+{
+  "success": true,
+  "message": "Order verification done successfully",
+  "data": {
+    "orderDetails": {
+      /* order object */
+    }
+  }
+}
+```
+
+**Failure Response (if payment failed):**
+
+```json
+{
+  "success": false,
+  "message": "Order not successfully done",
+  "data": null
+}
+```
+
+---
+
+### 3. Get User Orders
+
+**Endpoint:**  
+`POST /api/v1.0/order/userorders`  
+**Description:**  
+Get all orders for the authenticated user.
+
+**Headers:**
+
+```
+Authorization: Bearer <jwt_token>
+```
+
+**Success Response (200):**
+
+```json
+{
+  "success": true,
+  "messgae": "Fetched user orders successfully",
+  "data": [
+    {
+      "_id": "<order_id>",
+      "userId": "<user_id>",
+      "items": [
+        /* ... */
+      ],
+      "amount": 26,
+      "address": {
+        /* ... */
+      },
+      "status": "Food Processing",
+      "date": "2024-06-01T12:00:00.000Z",
+      "payment": true
+    }
+  ]
+}
+```
+
+**Error Response (500):**
+
+```json
+{
+  "success": false,
+  "message": "Error message",
+  "data": null
+}
+```
+
+---
+
+### 4. List All Orders (Admin Only)
+
+**Endpoint:**  
+`GET /api/v1.0/order/list`  
+**Description:**  
+Get all orders (admin only).
+
+**Headers:**
+
+```
+Authorization: Bearer <jwt_token>
+```
+
+**Success Response (200):**
+
+```json
+{
+  "success": true,
+  "message": "Fetched all orders of your resturant",
+  "data": {
+    "orders": [
+      {
+        /* order object */
+      }
+    ]
+  }
+}
+```
+
+**Error Response (401/500):**
+
+```json
+{
+  "success": false,
+  "message": "You are not admin" | "Error message",
+  "data": null
+}
+```
+
+---
+
+### 5. Update Order Status (Admin Only)
+
+**Endpoint:**  
+`POST /api/v1.0/order/status`  
+**Description:**  
+Update the status of an order (admin only).
+
+**Headers:**
+
+```
+Authorization: Bearer <jwt_token>
+```
+
+**Request Body (JSON):**
+
+```json
+{
+  "orderId": "<order_id>",
+  "status": "Delivered"
+}
+```
+
+**Success Response (200):**
+
+```json
+{
+  "success": true,
+  "message": "Status Updated Successfully",
+  "data": {
+    "orderDetails": {
+      /* updated order object */
+    }
+  }
+}
+```
+
+**Error Response (401/500):**
+
+```json
+{
+  "success": false,
+  "message": "You are not an admin" | "Error message",
+  "data": null
+}
+```
+
+---
+
 **Note:**
 
 - All responses are in JSON format.
 - For image upload, the file will be stored in the `uploads` directory on the server.
 - The `token` returned is a JWT for authentication in protected routes.
 - `cartData` object maps food item IDs to their quantities in the user's cart.
+- The Stripe session URL should be opened by the frontend for payment.
+- Only users with the `admin` role can access the list and status
