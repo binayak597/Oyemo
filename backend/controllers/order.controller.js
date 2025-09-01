@@ -7,7 +7,7 @@ import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-const frontend_url = process.env.FRONTEND_URL
+const frontend_url = process.env.FRONTEND_URL1
 
 // placing user order for frontend
 const placeOrder = async (req, res) => {
