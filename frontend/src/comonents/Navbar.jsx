@@ -18,7 +18,7 @@ const Navbar = ({ setShowLogin }) => {
 
   const navigate = useNavigate();
 
-  const { token } = useContext(StoreContext);
+  const { token, setToken } = useContext(StoreContext);
 
   const menuItems = [
     { id: "home", label: "Home", href: "/", type: "route" },
@@ -53,6 +53,12 @@ const Navbar = ({ setShowLogin }) => {
       }, 300);
     }
   };
+
+  const handleLogout = () => {
+
+    localStorage.removeItem("token");
+    setToken("");
+  }
 
   return (
     <nav className="relative bg-white shadow-sm border-b border-gray-100">
@@ -169,7 +175,7 @@ const Navbar = ({ setShowLogin }) => {
                       Orders
                     </button>
                     <hr className="my-2 border-gray-200" />
-                    <button className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors duration-200">
+                    <button className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-red-50  hover:text-red-600 transition-colors duration-200" onClick={handleLogout}>
                       <LogOut size={16} className="mr-3" />
                       Logout
                     </button>
@@ -274,7 +280,7 @@ const Navbar = ({ setShowLogin }) => {
                     </button>
                   </div>
                   <div>
-                    <button className="block w-full text-left py-3 text-base font-medium capitalize transition-all duration-300 hover:bg-white hover:text-red-600 hover:pl-8 text-gray-700">
+                    <button className="block w-full text-left py-3 text-base font-medium capitalize transition-all duration-300 hover:bg-white hover:text-red-600 hover:pl-8 text-gray-700" onClick={handleLogout}>
                       <LogOut size={18} className="inline mr-3" />
                       Logout
                     </button>
