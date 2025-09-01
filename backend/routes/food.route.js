@@ -4,11 +4,10 @@ import {
   listFood,
   removeFood,
 } from "../controllers/food.controller.js";
-import fileUpload from "../middlewares/multer.middleware.js";
 
 const router = Router();
 
-router.post("/add", fileUpload.single("image"), addFood);
+router.post("/add", addFood);
 router.get("/list", listFood);
 router.post("/remove", removeFood);
 
