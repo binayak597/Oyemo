@@ -17,6 +17,8 @@ const Auth = () => {
     password: "",
   });
 
+  const [loading, setLoading] = useState(false);
+
   const onChangeHandler = (ev) => {
     const { name, value } = ev.target;
     setData((data) => ({ ...data, [name]: value }));
@@ -25,17 +27,22 @@ const Auth = () => {
   const handleSubmit = async (ev) => {
     ev.preventDefault();
 
+    setLoading(true);
     try {
       const endpoint = isLogin ? "/auth/login" : "/auth/register";
       const payload = isLogin
         ? { email: data.email, password: data.password }
-        : { name: data.name, email: data.email, password: data.password, role: "ADMIN" };
+        : {
+            name: data.name,
+            email: data.email,
+            password: data.password,
+            role: "ADMIN",
+          };
 
       const res = await axios.post(`${BASE_API}${endpoint}`, payload);
 
       if (res.data.success && res.data.data?.role === "ADMIN") {
-
-        const {token, role} = res.data.data
+        const { token, role } = res.data.data;
         setToken(token);
         setAdmin(role);
         localStorage.setItem("admin-token", token);
@@ -53,6 +60,8 @@ const Auth = () => {
     } catch (error) {
       setData({ name: "", email: "", password: "" });
       toast.error(error.response?.data?.message || error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -157,7 +166,9 @@ const Auth = () => {
               type="submit"
               className="w-full py-3 bg-[#23CE6B] text-white font-medium rounded-lg hover:bg-[#23CE6B]/90 focus:ring-2 focus:ring-[#23CE6B]/50 transition-all duration-200 transform hover:scale-105 flex items-center justify-center gap-2"
             >
-              {isLogin ? (
+              {loading ? (
+                "Loading"
+              ) : isLogin ? (
                 <>
                   <LogIn size={18} />
                   Sign In
