@@ -96,7 +96,7 @@ const userOrders = async (req, res) => {
 const listOrders = async (req, res) => {
   try {
     let userData = await UserModel.findById(req.userId);
-    if (userData && userData.role === "admin") {
+    if (userData && userData.role === "ADMIN") {
       const orders = await OrderModel.find({});
       return res.status(200).json({ success: true, message: "Fetched all orders of your resturant", data: {
         orders
@@ -117,7 +117,7 @@ const updateStatus = async (req, res) => {
   try {
     let userData = await UserModel.findById(req.userId);
     
-    if (userData && userData.role === "admin") {
+    if (userData && userData.role === "ADMIN") {
       let orderDetails = await OrderModel.findByIdAndUpdate(orderId, {
         status
       });

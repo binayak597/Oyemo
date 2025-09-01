@@ -49,7 +49,7 @@ const loginUser = async (req, res) => {
 // register user
 
 const registerUser = async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, role } = req.body;
   try {
     const exists = await UserModel.findOne({ email });
     if (exists) {
@@ -82,6 +82,7 @@ const registerUser = async (req, res) => {
       name: name,
       email: email,
       password: hashedPassword,
+      role
     });
 
     const user = await newUser.save();
