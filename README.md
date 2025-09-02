@@ -143,3 +143,7 @@ npm run dev
 ### 6. Author
 
 - Built by Binayak Mukherjee 🚀
+
+### 7. Feedback
+
+If you have any feedback, please reach out to me [here](https://www.linkedin.com/in/binayak-mukherjee)
