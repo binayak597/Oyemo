@@ -7,6 +7,7 @@ import Add from "./pages/Add";
 import Auth from "./pages/Auth";
 import List from "./pages/List";
 import Orders from "./pages/Orders";
+import NotFound from "./pages/NotFound";
 const App = () => {
   const { token, loading } = useContext(StoreContext);
 
@@ -41,6 +42,10 @@ const App = () => {
             <Route
               path="/orders"
               element={token ? <Orders /> : <Navigate to="/auth" />}
+            />
+            <Route
+              path="*"
+              element={<NotFound />}
             />
           </Routes>
         </div>

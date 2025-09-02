@@ -10,6 +10,7 @@ import MyOrders from "./pages/MyOrders";
 import PlaceOrder from "./pages/PlaceOrder";
 import Verify from "./pages/Verify";
 import { StoreContext } from "./context/StoreContext";
+import NotFound from "./pages/NotFound";
 
 const App = () => {
   
@@ -26,6 +27,7 @@ const App = () => {
           <Route path="/order" element={<PlaceOrder />} />
           <Route path="/verify" element={<Verify />} />
           <Route path="/my-orders" element={<MyOrders />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
 
