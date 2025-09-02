@@ -199,7 +199,11 @@ const Navbar = ({ setShowLogin }) => {
               <Link to="/cart">
                 <ShoppingBasket size={18} className="text-gray-600" />
               </Link>
-              <span className="absolute -top-1 -right-1 h-3 w-3 bg-[#23CE6B] rounded-full animate-pulse"></span>
+              {Object.keys(cartItems).length > 0 && (
+                 <span className="absolute -top-1 -right-1 h-3 w-3 bg-[#23CE6B] animate-pulse">
+                {Object.keys(cartItems).length}
+              </span>
+              )}
             </button>
 
             {/* Mobile Menu Toggle */}
