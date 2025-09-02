@@ -4,6 +4,41 @@ Oyemo is a complete food delivery solution with features for users, admin manage
 
 ---
 
+## Website URLS
+
+- Oyemo - A Food Delivery App -> https://oyemo.netlify.app
+- Oyemo - An Admin Site -> https://oyemo-admin.netlify.app
+
+## 📸 Screenshots
+
+### 🔹 HomePage
+
+![HomePage](./screenshots/home.jpeg)
+
+### 🔹 Login
+
+![Login](./screenshots/login.jpeg)
+
+### 🔹 Menu Section
+
+![Menu Section](./screenshots/menu.jpeg)
+
+### 🔹 Cart Section
+
+![Cart Section](./screenshots/cart.jpeg)
+
+### 🔹 Order History Section
+
+![Order History Section](./screenshots/order.jpeg)
+
+### 🔹 Not Found Page
+
+![Not Found Page](./screenshots/not-found.jpeg)
+
+### 🔹 Admin Panel Setup
+
+![Admin Panel Setup](./screenshots/admin-food-items.jpeg)
+
 ## Tech Stack
 
 - **Frontend:** React, Vite, Tailwind CSS
